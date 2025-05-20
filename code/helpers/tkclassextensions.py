@@ -1,6 +1,6 @@
 import tkinter as tk
-from caesarcipher import caesar_cipher
-from helpers.configs import grayed_out, light_bg, button_cfg, fg_color
+from code.caesarcipher import caesar_cipher
+from code.helpers.configs import grayed_out, light_bg, fg_color
 
 
 class DetailedButton(tk.Button):
