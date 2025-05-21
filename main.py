@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import messagebox
+from string import ascii_letters
 
 from helpers.configs import main_cfg, desc_cfg, ButtonDescriptions, button_cfg, bg_color, light_bg, entry_cfg, label_cfg, fg_color, grayed_out
 from helpers.tkclassextensions import DetailedButton, SwitchButton, PromptTextEntry, Shifter, CaesarOutputLabel
@@ -156,6 +158,32 @@ def init_vigenere() -> None:
     switch_button.place(x=170, y=5)
     switch_button.bind('<Enter>', lambda s: description.configure(text='Switch between encoding and decoding.'))
     switch_button.bind('<Leave>', _hover_leave)
+
+    def _keyword_check(S):
+        if S in list(ascii_letters):
+            return True
+        _key_press_popup(S)
+        return False
+
+    alphabetical_check = (root.register(_keyword_check), '%S')
+
+    def _key_press_popup(char):
+        messagebox.showinfo("Popup", f'the keyword can only contain letters, not "{char}"')
+
+    plaintext_getter = PromptTextEntry(
+        vigenere_screen,
+        "Enter text here...",
+        entry_cfg=entry_cfg
+    )
+    plaintext_getter.place(x=65, y=45)
+    plaintext_getter.filler.place(x=70, y=48)
+
+    keyword_getter = PromptTextEntry(
+        vigenere_screen,
+        "Enter keyword here...",
+        entry_cfg=entry_cfg
+    )
+
 
 if __name__ == "__main__":
 
