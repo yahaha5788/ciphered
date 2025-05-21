@@ -70,7 +70,7 @@ def vigenere_cipher(plaintext: str, keyword: str) -> str:
 
     cipher_letters = list(zip(plaintext, keyword))
     for t in cipher_letters:
-        if t[0] not in base_list:
+        if t[0] == " ":
             ind = cipher_letters.index(t)
             keyword.insert(ind, " ")
 
@@ -80,10 +80,11 @@ def vigenere_cipher(plaintext: str, keyword: str) -> str:
     for i in cipher_letters:
         if i[0] in base_list:
             ciphertext += _encode(grid, i[0], i[1])
-            print('base')
         else:
             ciphertext += i[0]
-            print('not base')
 
     return ciphertext
 
+print(vigenere_cipher("plaintextphrase", "keyword"))
+print(vigenere_cipher("plain text phrase", "keyword"))
+print(vigenere_cipher("pla1n t3xt pHrase", "keyword"))
