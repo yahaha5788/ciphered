@@ -24,7 +24,7 @@ def _generate_grid() -> list[list[str]]:
 
     return grid
 
-def _fix_key(desired_index: int, key: list[str]):
+def _fix_key(desired_index: int, key: list[str]) -> list[str]:
     """
     trims the given keyword to the length of the plaintext.
     :param desired_index: the length of the plaintext
@@ -65,8 +65,14 @@ def vigenere_cipher(plaintext: str, keyword: str) -> str:
     """
     grid = _generate_grid()
 
-    plaintext = list(plaintext.lower())
-    keyword = _fix_key(len(plaintext), list(keyword.lower()))
+    plaintext: list[str] = list(plaintext.lower())
+    keyword: list[str] = _fix_key(len(plaintext), list(keyword.lower()))
+
+    cipher_letters = list(zip(plaintext, keyword))
+    for t in cipher_letters:
+        if t[0] not in base_list:
+            ind = cipher_letters.index(t)
+            keyword.insert(ind, " ")
 
     cipher_letters = list(zip(plaintext, keyword))
     ciphertext = ""
@@ -80,3 +86,4 @@ def vigenere_cipher(plaintext: str, keyword: str) -> str:
             print('not base')
 
     return ciphertext
+
