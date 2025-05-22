@@ -56,7 +56,7 @@ def init_caesar() -> None:
 
     plaintext_getter = PromptTextEntry(
         caesar_screen,
-        "Enter text here...",
+        "Enter plaintext here...",
         entry_cfg=entry_cfg,
     )
     plaintext_getter.place(x=65, y=45)
@@ -110,7 +110,8 @@ def init_caesar() -> None:
         caesar_screen,
         plaintext_getter,
         shift,
-        start_text="Output appears here...",
+        switch_button,
+        start_text="Ciphertext appears here...",
         wraplength='270',
         bg=bg_color,
         fg=grayed_out,
@@ -120,6 +121,9 @@ def init_caesar() -> None:
     out.place(x=10, y=140)
     out.bind("<Enter>", lambda o: description.configure(text='The output of the caesar cipher.'))
     out.bind("<Leave>", _hover_leave)
+
+    switch_button.state.trace_add("write", lambda *args: plaintext_getter.filler.configure(text='Enter plaintext here...' if not switch_button.state.get() else 'Enter ciphertext here...'))
+    switch_button.state.trace_add("write", lambda *args: out.set_default(value = 'Ciphertext appears here...' if not switch_button.state.get() else 'Plaintext appears here...'))
 
     def _clear_all():
         shift.reset()

@@ -1,4 +1,5 @@
 import tkinter as tk
+
 from ciphers.caesarcipher import caesar_cipher
 from helpers.configs import grayed_out, light_bg, fg_color
 
@@ -11,17 +12,20 @@ class DetailedButton(tk.Button):
 class SwitchButton(tk.Button):
     def __init__(self, master: tk.BaseWidget, on_text: str, off_text: str, **kwargs):
         self.state = tk.BooleanVar()
-        super().__init__(master=master, text=off_text, command=self.toggle, textvariable=self.state)
+        super().__init__(master=master, text=off_text, command=self.toggle, **kwargs)
         self.is_on = False
+        self.state.set(False)
         self.on_text = on_text
         self.off_text = off_text
 
     def toggle(self):
         self.is_on = not self.is_on
+        self.state.set(self.is_on)
         if self.is_on:
             self.configure(text=self.on_text)
         else:
             self.configure(text=self.off_text)
+
 
     def set_state(self, state: bool):
         if state is True:
@@ -30,6 +34,7 @@ class SwitchButton(tk.Button):
         else:
             self.configure(text=self.off_text)
             self.is_on = False
+        self.state.set(self.is_on)
 
 class PromptTextEntry(tk.Entry):
     def __init__(self, master: tk.BaseWidget, prompt_text: str, entry_cfg: dict, **kwargs):
@@ -112,23 +117,35 @@ class Shifter(tk.Label):
         self.content.set(self.current_index)
 
 class CaesarOutputLabel(tk.Label):
-    def __init__(self, master, dependency: PromptTextEntry, shift: Shifter, start_text: str, **kwargs):
+    def __init__(self, master, dependency: PromptTextEntry, shift: Shifter, encode: SwitchButton, start_text: str, **kwargs):
         super().__init__(master=master, text=start_text, **kwargs)
         self.default = start_text
         self.dependency: tk.Entry = dependency
         self.shift_get: tk.IntVar = shift.content
         self.text_get: tk.StringVar = dependency.text_var
+        self.encode_get: tk.BooleanVar = encode.state
 
         self.shift_get.trace_add("write", self.run_updates)
         self.text_get.trace_add("write", self.run_updates)
+        self.encode_get.trace_add("write", self.run_updates)
 
     def run_updates(self, *args):
         plaintext = self.text_get.get()
+        encode = not self.encode_get.get() #if true then encoding if false decode
         if len(plaintext) != 0:
             shift = self.shift_get.get()
-            ciphertext = caesar_cipher(plaintext, shift)
+            if encode is True:
+                ciphertext = caesar_cipher(plaintext, shift)
+            else:
+                shift = abs(shift - 26)
+                ciphertext = caesar_cipher(plaintext, shift)
             self.configure(text=ciphertext, fg=fg_color)
         else:
             self.configure(text=self.default, fg=grayed_out)
+
+    def set_default(self, value: str):
+        self.default = value
+        if len(self.text_get.get()) == 0:
+            self.configure(text=self.default)
 
 
