@@ -17,19 +17,6 @@ def _shift(letter: str, shift: int) -> str:
 
     return base_list[letter_index]
 
-def _is_number(char):
-    """
-    tf do you *think* it does?
-    :param char: The character to check
-    :return: i'm not going to bother writing this
-    """
-
-    try:
-        int(char)
-        return True
-    except ValueError:
-        return False
-
 def _is_in_alphabet(char):
     if char not in base_list:
         return False

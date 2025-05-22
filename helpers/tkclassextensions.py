@@ -10,7 +10,8 @@ class DetailedButton(tk.Button):
 
 class SwitchButton(tk.Button):
     def __init__(self, master: tk.BaseWidget, on_text: str, off_text: str, **kwargs):
-        super().__init__(master=master, text=off_text, command=self.toggle, **kwargs)
+        self.state = tk.BooleanVar()
+        super().__init__(master=master, text=off_text, command=self.toggle, textvariable=self.state)
         self.is_on = False
         self.on_text = on_text
         self.off_text = off_text

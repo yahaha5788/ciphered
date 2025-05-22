@@ -84,7 +84,3 @@ def vigenere_cipher(plaintext: str, keyword: str) -> str:
             ciphertext += i[0]
 
     return ciphertext
-
-print(vigenere_cipher("plaintextphrase", "keyword"))
-print(vigenere_cipher("plain text phrase", "keyword"))
-print(vigenere_cipher("pla1n t3xt pHrase", "keyword"))

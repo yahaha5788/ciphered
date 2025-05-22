@@ -165,7 +165,7 @@ def init_vigenere() -> None:
         _key_press_popup(S)
         return False
 
-    alphabetical_check = (root.register(_keyword_check), '%S')
+    keyword_check = (root.register(_keyword_check), '%S')
 
     def _key_press_popup(char):
         messagebox.showinfo("Popup", f'the keyword can only contain letters, not "{char}"')
@@ -181,8 +181,12 @@ def init_vigenere() -> None:
     keyword_getter = PromptTextEntry(
         vigenere_screen,
         "Enter keyword here...",
-        entry_cfg=entry_cfg
+        entry_cfg=entry_cfg,
+        validate='key',
+        validatecommand=keyword_check
     )
+    keyword_getter.place(x=65, y=75)
+    keyword_getter.filler.place(x=70, y=78)
 
 
 if __name__ == "__main__":
