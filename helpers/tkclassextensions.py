@@ -171,3 +171,8 @@ class VigenereOutputLabel(tk.Label):
             self.configure(text=text, fg=fg_color)
         else:
             self.configure(text=self.default, fg=grayed_out)
+
+    def set_default(self, value: str):
+        self.default = value
+        if len(self.plaintext_getter.get()) == 0:
+            self.configure(text=self.default)
