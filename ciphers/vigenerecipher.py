@@ -24,23 +24,6 @@ def _generate_grid() -> list[list[str]]:
 
     return grid
 
-def _fix_key(desired_index: int, key: list[str]) -> list[str]:
-    """
-    trims the given keyword to the length of the plaintext.
-    :param desired_index: the length of the plaintext
-    :param key: the keyword
-    :return: the fixed key
-    """
-    result_key = key.copy()
-
-    while len(result_key) < desired_index:
-        result_key += key
-
-    while len(result_key) > desired_index:
-        result_key.pop(len(result_key)-1)
-
-    return result_key
-
 def _encode(grid: list[list[str]], plain_letter: str, key_letter: str) -> str:
     """
     encodes a given letter using the grid and a corresponding key letter
@@ -54,33 +37,43 @@ def _encode(grid: list[list[str]], plain_letter: str, key_letter: str) -> str:
 
     return grid[plain_index][key_index]
 
+def _decode(grid: list[list[str]], cipher_letter: str, key_letter: str) -> str:
+
+    row = next(row for row in grid if row[0] == key_letter)
+    ind = row.index(cipher_letter)
+
+    return base_list[ind]
+
 
 # --------------------------- USE THIS --------------------------- #
-def vigenere_cipher(plaintext: str, keyword: str) -> str:
+def vigenere_cipher(plain_or_ciphertext: str, keyword: str, encode: bool = True) -> str:
     """
     The actual cipher function which uses all the other functions
-    :param plaintext: the plaintext to encode
+    :param encode: True by default to encode, set False to decode text
+    :param plain_or_ciphertext: the plaintext to encode
     :param keyword: the keyword to use
     :return: the ciphertext
     """
     grid = _generate_grid()
 
-    plaintext: list[str] = list(plaintext.lower())
-    keyword: list[str] = _fix_key(len(plaintext), list(keyword.lower()))
+    p_or_c: list[str] = list(plain_or_ciphertext.lower())
+    keyword = list(keyword.lower())
 
-    cipher_letters = list(zip(plaintext, keyword))
-    for t in cipher_letters:
-        if t[0] == " ":
-            ind = cipher_letters.index(t)
-            keyword.insert(ind, " ")
+    result_text = ""
+    key_index = 0
 
-    cipher_letters = list(zip(plaintext, keyword))
-    ciphertext = ""
+    for char in p_or_c:
+        if char in ascii_lowercase:
 
-    for i in cipher_letters:
-        if i[0] in base_list:
-            ciphertext += _encode(grid, i[0], i[1])
+            key_char = keyword[key_index % len(keyword)]
+
+            if encode:
+                result_text += _encode(grid, char, key_char)
+            else:
+                result_text += _decode(grid, char, key_char)
+
+            key_index += 1
         else:
-            ciphertext += i[0]
+            result_text += char
 
-    return ciphertext
+    return result_text

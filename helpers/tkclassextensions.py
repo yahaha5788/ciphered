@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from ciphers.caesarcipher import caesar_cipher
+from ciphers.vigenerecipher import vigenere_cipher
 from helpers.configs import grayed_out, light_bg, fg_color
 
 
@@ -64,12 +65,12 @@ class PromptTextEntry(tk.Entry):
 
 class Shifter(tk.Label):
     def __init__(self, master, lower: int, upper: int, **kwargs):
-        self.content = tk.IntVar()
+        self.number = tk.IntVar()
         self.indices: list[int] = []
         for x in range(lower, upper):
             self.indices.append(x)
         self.current_index = lower
-        super().__init__(master=master, text=self.current_index, textvariable=self.content, **kwargs)
+        super().__init__(master=master, text=self.current_index, textvariable=self.number, **kwargs)
         self.upper = upper
         self.lower = lower
 
@@ -99,31 +100,31 @@ class Shifter(tk.Label):
     def increase(self):
         if self.current_index == self.upper - 1:
             self.current_index = self.lower
-            self.content.set(self.current_index)
+            self.number.set(self.current_index)
         else:
             self.current_index += 1
-            self.content.set(self.current_index)
+            self.number.set(self.current_index)
 
     def decrease(self):
         if self.current_index == self.lower:
             self.current_index = self.upper - 1
-            self.content.set(self.current_index)
+            self.number.set(self.current_index)
         else:
             self.current_index -= 1
-            self.content.set(self.current_index)
+            self.number.set(self.current_index)
 
     def reset(self):
         self.current_index = self.lower
-        self.content.set(self.current_index)
+        self.number.set(self.current_index)
 
 class CaesarOutputLabel(tk.Label):
-    def __init__(self, master, dependency: PromptTextEntry, shift: Shifter, encode: SwitchButton, start_text: str, **kwargs):
+    def __init__(self, master, plaintext_source: PromptTextEntry, shift_source: Shifter, encode_source: SwitchButton, start_text: str, **kwargs):
         super().__init__(master=master, text=start_text, **kwargs)
         self.default = start_text
-        self.dependency: tk.Entry = dependency
-        self.shift_get: tk.IntVar = shift.content
-        self.text_get: tk.StringVar = dependency.text_var
-        self.encode_get: tk.BooleanVar = encode.state
+
+        self.shift_get: tk.IntVar = shift_source.number
+        self.text_get: tk.StringVar = plaintext_source.text_var
+        self.encode_get: tk.BooleanVar = encode_source.state
 
         self.shift_get.trace_add("write", self.run_updates)
         self.text_get.trace_add("write", self.run_updates)
@@ -148,4 +149,25 @@ class CaesarOutputLabel(tk.Label):
         if len(self.text_get.get()) == 0:
             self.configure(text=self.default)
 
+class VigenereOutputLabel(tk.Label):
+    def __init__(self, master, plaintext_source: PromptTextEntry, keyword_source: PromptTextEntry, encode_source: SwitchButton, start_text: str, **kwargs):
+        super().__init__(master=master, text=start_text, **kwargs)
+        self.default = start_text
 
+        self.plaintext_getter = plaintext_source.text_var
+        self.keyword_getter = keyword_source.text_var
+        self.encode_getter = encode_source.state
+
+        self.plaintext_getter.trace_add("write", self.run_updates)
+        self.keyword_getter.trace_add("write", self.run_updates)
+        self.encode_getter.trace_add("write", self.run_updates)
+
+    def run_updates(self, *args):
+        plaintext: str = self.plaintext_getter.get()
+        encode: bool = not self.encode_getter.get()
+        keyword: str = self.keyword_getter.get()
+        if len(plaintext) != 0 and len(keyword) != 0:
+            text = vigenere_cipher(plaintext, keyword, encode=encode)
+            self.configure(text=text, fg=fg_color)
+        else:
+            self.configure(text=self.default, fg=grayed_out)

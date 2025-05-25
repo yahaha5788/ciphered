@@ -3,7 +3,7 @@ from tkinter import messagebox
 from string import ascii_letters
 
 from helpers.configs import main_cfg, desc_cfg, ButtonDescriptions, button_cfg, bg_color, light_bg, entry_cfg, label_cfg, fg_color, grayed_out
-from helpers.tkclassextensions import DetailedButton, SwitchButton, PromptTextEntry, Shifter, CaesarOutputLabel
+from helpers.tkclassextensions import DetailedButton, SwitchButton, PromptTextEntry, Shifter, CaesarOutputLabel, VigenereOutputLabel
 
 def _hover_leave(event):
     description.configure(text="Hover over an object to see a description.")
@@ -163,17 +163,6 @@ def init_vigenere() -> None:
     switch_button.bind('<Enter>', lambda s: description.configure(text='Switch between encoding and decoding.'))
     switch_button.bind('<Leave>', _hover_leave)
 
-    def _keyword_check(S):
-        if S in list(ascii_letters):
-            return True
-        _key_press_popup(S)
-        return False
-
-    keyword_check = (root.register(_keyword_check), '%S')
-
-    def _key_press_popup(char):
-        messagebox.showinfo("Popup", f'the keyword can only contain letters, not "{char}"')
-
     plaintext_getter = PromptTextEntry(
         vigenere_screen,
         "Enter text here...",
@@ -182,16 +171,42 @@ def init_vigenere() -> None:
     plaintext_getter.place(x=65, y=45)
     plaintext_getter.filler.place(x=70, y=48)
 
+    def _keyword_check(d, S):
+        if d == '1':
+            if S not in ascii_letters:
+                messagebox.showinfo("invalid keyword", f'the keyword can only contain letters, not "{S}"')
+                return False
+            elif S in keyword_getter.get():
+                messagebox.showinfo("invalid keyword", f'the keyword cannot contain "{S}", it is a duplicate letter.')
+                return False
+            return True
+        return True
+
+    keyword_check = (root.register(_keyword_check), '%d', '%S')
+
     keyword_getter = PromptTextEntry(
         vigenere_screen,
         "Enter keyword here...",
         entry_cfg=entry_cfg,
         validate='key',
-        validatecommand=keyword_check
+        validatecommand=keyword_check,
     )
     keyword_getter.place(x=65, y=75)
     keyword_getter.filler.place(x=70, y=78)
 
+    result = VigenereOutputLabel(
+        vigenere_screen,
+        plaintext_getter,
+        keyword_getter,
+        switch_button,
+        start_text="Ciphertext appears here...",
+        wraplength='270',
+        bg=bg_color,
+        fg=grayed_out,
+        justify='left',
+        font=('Calibri', 10)
+    )
+    result.place(x=10, y=140)
 
 if __name__ == "__main__":
 
