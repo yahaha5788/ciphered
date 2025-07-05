@@ -54,6 +54,13 @@ label_cfg: dict = {
     'font': ('Calibri', 10),
 }
 
+output_cfg: dict = {
+    'bg': bg_color,
+    'fg': grayed_out,
+    'font': ('Calibri', 10),
+    'bd': '1',
+}
+
 class ButtonDescriptions(Enum):
     CAESAR = 'A caesar cipher is a substitution cipher where each letter in the plaintext is shifted a certain number of positions down the alphabet. For example, with a shift of 3, "A" becomes "D," "B" becomes "E," and so on. This is a form of monoalphabetic substitution, meaning each letter in the plaintext is consistently replaced by the same letter in the ciphertext'
     VIGENERE = "The Vigenère cipher is a method of encrypting alphabetic text using a series of interwoven Caesar ciphers based on a keyword. It's a polyalphabetic substitution cipher, meaning that different letters of the plaintext may be shifted by different amounts, depending on the keyword. This makes it more secure than monoalphabetic ciphers like the caesar cipher."
