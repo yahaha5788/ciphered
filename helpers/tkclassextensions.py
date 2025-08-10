@@ -117,9 +117,11 @@ class Shifter(tk.Label):
         self.current_index = self.lower
         self.number.set(self.current_index)
 
-class CaesarOutputLabel(tk.Label):
+class CaesarOutputLabel(tk.Text):
     def __init__(self, master, plaintext_source: PromptTextEntry, shift_source: Shifter, encode_source: SwitchButton, start_text: str, **kwargs):
-        super().__init__(master=master, text=start_text, **kwargs)
+        super().__init__(master=master, state='normal', **kwargs)
+        self.insert(tk.END, start_text)
+        self.configure(state='disabled')
         self.default = start_text
 
         self.shift_get: tk.IntVar = shift_source.number
@@ -137,17 +139,28 @@ class CaesarOutputLabel(tk.Label):
             shift = self.shift_get.get()
             if encode is True:
                 ciphertext = caesar_cipher(plaintext, shift)
+                self.set(ciphertext)
             else:
                 shift = abs(shift - 26)
                 ciphertext = caesar_cipher(plaintext, shift)
-            self.configure(text=ciphertext, fg=fg_color)
+                self.set(ciphertext)
+            self.configure(fg=fg_color)
         else:
-            self.configure(text=self.default, fg=grayed_out)
+            self.configure(fg=grayed_out)
+
 
     def set_default(self, value: str):
         self.default = value
+        print("set_default triggers")
         if len(self.text_get.get()) == 0:
-            self.configure(text=self.default)
+            print("set_default condition triggers")
+            self.set(value)
+
+    def set(self, text: str):
+        self.configure(state='normal')
+        self.delete('1.0', tk.END)
+        self.insert(tk.END, text)
+        self.configure(state='disabled')
 
 class VigenereOutputLabel(tk.Label):
     def __init__(self, master, plaintext_source: PromptTextEntry, keyword_source: PromptTextEntry, encode_source: SwitchButton, start_text: str, **kwargs):

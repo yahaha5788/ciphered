@@ -2,12 +2,11 @@ import tkinter as tk
 from tkinter import messagebox
 from string import ascii_letters
 
-from setuptools.logging import configure
 
-from helpers.configs import main_cfg, desc_cfg, ButtonDescriptions, button_cfg, bg_color, light_bg, entry_cfg, label_cfg, fg_color, grayed_out
+from helpers.configs import main_cfg, desc_cfg, ButtonDescriptions, button_cfg, bg_color, light_bg, entry_cfg, label_cfg, fg_color, grayed_out, output_cfg
 from helpers.tkclassextensions import DetailedButton, SwitchButton, PromptTextEntry, Shifter, CaesarOutputLabel, VigenereOutputLabel
 
-def _hover_leave(event):
+def _hover_leave(event) -> None:
     description.configure(text="Hover over an object to see a description.")
 
 def init_home() -> None:
@@ -52,8 +51,8 @@ def init_caesar() -> None:
 
     switch_button = SwitchButton(
         caesar_screen,
-        "Decoding text",
-        "Encoding text",
+        "Decoding text (shift left)",
+        "Encoding text (shift right)",
         cnf=button_cfg
     )
 
@@ -88,11 +87,8 @@ def init_caesar() -> None:
         shift,
         switch_button,
         start_text="Ciphertext appears here...",
-        wraplength='270',
-        bg=bg_color,
-        fg=grayed_out,
-        justify='left',
-        font=('Calibri', 10)
+        cnf=output_cfg,
+        width=40
     )
 
     def _clear_all():
@@ -108,7 +104,7 @@ def init_caesar() -> None:
         cnf=button_cfg,
         command=_clear_all)
 
-    switch_button.place(           x=170, y=5)
+    switch_button.place(           x=140, y=5)
     plaintext_getter.place(        x=65,  y=45)
     plaintext_getter.filler.place( x=70,  y=48)
     shift_caption.place(           x=120, y=70)
@@ -116,10 +112,10 @@ def init_caesar() -> None:
     shift.increase.place(          x=150, y=90)
     shift.decrease.place(          x=105, y=90)
     out_caption.place(             x=10 , y=120)
-    out.place(                     x=10 , y=140)
+    out.place(                     x=12 , y=140)
     back_button.place(             x=5,   y=5) # this makes my brain happy
 
-
+    # L A M B D A
     switch_button.bind('<Enter>', lambda s: description.configure(text='Switch between encoding and decoding.'))
 
     plaintext_getter.bind('<Enter>', lambda p: description.configure(
@@ -154,7 +150,7 @@ def init_caesar() -> None:
     shift.increase.bind(         "<Leave>", _hover_leave)
     shift.decrease.bind(         "<Leave>", _hover_leave)
     out_caption.bind(            "<Leave>", _hover_leave)
-    out.bind(                    "<Leave>", _hover_leave)
+    out.bind(                    "<Leave>", _hover_leave) # why can't there be an easier way to do this :sob:
     back_button.bind(            '<Leave>', _hover_leave) #guh
 
 def init_vigenere() -> None:
@@ -169,8 +165,8 @@ def init_vigenere() -> None:
 
     switch_button = SwitchButton(
         vigenere_screen,
-        "Decoding text",
-        "Encoding text",
+        "Decoding text (shift left)",
+        "Encoding text (shift right)",
         cnf=button_cfg
     )
 
@@ -221,7 +217,7 @@ def init_vigenere() -> None:
     )
 
     back_button.place(             x=5,   y=5)
-    switch_button.place(           x=170, y=5)
+    switch_button.place(           x=140, y=5)
     plaintext_getter.place(        x=65,  y=45)
     plaintext_getter.filler.place( x=70,  y=48)
     keyword_getter.place(          x=65,  y=75)
